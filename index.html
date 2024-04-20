@@ -1,0 +1,92 @@
+<!-- Frontend: HTML & JavaScript -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="checkoutButton">Checkout</button>
+  <script>
+    const checkoutButton = document.getElementById("checkoutButton");
+    checkoutButton.addEventListener("click", async () => {
+      try {
+        const myData = {
+          merchant_id: "10033177",
+          merchant_key: "p67vrkpp4x7ba",
+          return_url: "https://5e35-197-184-183-248.ngrok-free.app/success", 
+          cancel_url:"https://5e35-197-184-183-248.ngrok-free.app/cancel",
+          notify_url:"https://5e35-197-184-183-248.ngrok-free.app/notify",
+          amount: "10.00",
+          item_name: "Order#123"
+          
+        };
+      // 
+        // Function to generate the signature
+        const generateSignature = async () => {
+          try {
+            const response = await fetch("http://localhost:3000/hashData", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(myData),
+            });
+            if (!response.ok) {
+              throw new Error("Failed to generate signature");
+            }
+            const data = await response.json();
+            console.log("data.signature is ", data.signature);
+            myData["signature"] = data.signature;
+
+            // After generating the signature, create and submit the payment form
+            createAndSubmitPaymentForm();
+          } catch (error) {
+            console.error("Error generating signature:", error.message);
+          }
+        };
+
+        // Function to create and submit the payment form
+        const createAndSubmitPaymentForm = () => {
+          // Create the form element
+          const form = document.createElement("form");
+          form.action = "https://sandbox.payfast.co.za/eng/process";
+          form.method = "post";
+          form.style.display = "none";
+
+          for (const key in myData) {
+            if (myData.hasOwnProperty(key)) {
+              const value = myData[key];
+              if (value !== "") {
+                // Create an input element for each key-value pair in myData
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = value.trim();
+                // Append the input to the form
+                form.appendChild(input);
+              }
+            }
+          }
+
+          // Append the form to the body
+          document.body.appendChild(form);
+
+          // Submit the form
+          form.submit();
+        };
+
+        // Call the function to generate the signature
+        generateSignature();
+
+      } catch (error) {
+        console.error("Error during checkout:", error.message);
+      }
+    });
+  </script>
+</body>
+
+</html>

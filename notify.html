@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notify</title>
+</head>
+
+<body>
+    <script>
+        const verificationUrl = '/verify-payment'; // endpoint for verification
+        const paymentData = {           
+                merchant_id: "10033177",
+                merchant_key: "p67vrkpp4x7ba",
+                amount: "10.00",
+                item_name: "Order#123" };
+
+        fetch(verificationUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentData),
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.success) {
+                    console.log('Payment is successful');
+                } else {
+                    console.log('Payment failed, investigate manually');
+                }
+            })
+            .catch((error) => console.error(error));
+    </script>
+</body>
+
+</html>
