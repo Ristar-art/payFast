@@ -35,7 +35,7 @@ const generateSignature = (data, passPhrase = null) => {
 app.post("/hashData", (req, res) => {
   // Assuming req.body contains the data for which signature needs to be generated
   const data = req.body;
-  co
+  
   // Assuming passphrase is sent in the request body as well
    //const passPhrase = req.body.passphrase;
   // const passPhrase = "jt7NOE43FZPn";
